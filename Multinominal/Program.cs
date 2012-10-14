@@ -4,11 +4,23 @@ using System.Linq;
 using System.Text;
 using Facet.Combinatorics;
 using System.Numerics;
+using System.Diagnostics;
 
 namespace Multinominal
 {
 	class Program
 	{
+		static void Main(string[] args)
+		{
+			TestBigNumberMultinominal();
+
+			Console.WriteLine();
+
+			PerformanceTest();
+
+			Console.ReadLine();
+		}
+
 		static void TestBigNumberMultinominal()
 		{
 			const uint maxNumber = 1000;
@@ -35,22 +47,33 @@ namespace Multinominal
 				bool lnGammaIsCorrect = true;
 				while (enumerator.MoveNext())
 				{
-					result = Multinominal.BigAr(enumerator.Current.ToArray());
+					var curPermut = enumerator.Current.ToArray();
+
+					result = Multinominal.BigAr(curPermut);
 					if (result <= ulong.MaxValue)
 					{
 						count++;
 						prevResult = result;
 						prevComb = enumerator.Current;
 
-						MultinomCoefMethodTest(enumerator.Current.ToArray(), Multinominal.BinomAr, ref binomIsCorrect, (ulong)result, 0);
-						MultinomCoefMethodTest(enumerator.Current.ToArray(), Multinominal.LogAr, ref logIsCorrect, (ulong)result, 0);
-						MultinomCoefMethodTest(enumerator.Current.ToArray(), Multinominal.LogGammaAr, ref lnGammaIsCorrect, (ulong)result, 0);
-						MultinomCoefMethodTest(enumerator.Current.ToArray(), Multinominal.MyAr, ref optIsCorrect, (ulong)result, 0);
+						MultinomCoefMethodTest(curPermut, Multinominal.BinomAr, ref binomIsCorrect, (ulong)result, 0);
+						MultinomCoefMethodTest(curPermut, Multinominal.LogAr, ref logIsCorrect, (ulong)result, 0);
+						MultinomCoefMethodTest(curPermut, Multinominal.LogGammaAr, ref lnGammaIsCorrect, (ulong)result, 0);
+						MultinomCoefMethodTest(curPermut, Multinominal.MyAr, ref optIsCorrect, (ulong)result, 0);
 					}
 					else
 					{
 						if (prevComb != null)
-							Console.WriteLine(string.Format("args: ({0}); max value = {1}", string.Join(",", prevComb.ToArray()), prevResult));
+						{
+							var prevPermut = prevComb.ToArray();
+							var prevResultULong = (ulong)prevResult;
+							PrintIfCorrect(Multinominal.BinomAr, prevPermut, prevResultULong, binomIsCorrect);
+							PrintIfCorrect(Multinominal.LogAr, prevPermut, prevResultULong, logIsCorrect);
+							PrintIfCorrect(Multinominal.LogGammaAr, prevPermut, prevResultULong, lnGammaIsCorrect);
+							PrintIfCorrect(Multinominal.MyAr, prevPermut, prevResultULong, optIsCorrect);
+
+							Console.WriteLine(string.Format("BigNumber({0}) = {1}", string.Join(",", prevPermut), prevResult));
+						}
 						Console.WriteLine();
 						break;
 					}
@@ -70,78 +93,75 @@ namespace Multinominal
 				{
 					temp = 0;
 					temp = method(args);
-					if (temp - correctResult > maxError)
+					if (Multinominal.Diff(temp, correctResult) > maxError)
 						throw new Exception();
 				}
 				catch
 				{
 					if (temp != 0)
-						Console.WriteLine(string.Format("{0} failed at: args ({1}); value = {2} real value = {3}", method.Method.Name, string.Join(",", args), temp, correctResult));
+						Console.WriteLine(string.Format("{0}({1}) = {2}; error = {3}", 
+							method.Method.Name, string.Join(",", args), temp, Multinominal.Diff(temp, correctResult)));
 					else
-						Console.WriteLine(string.Format("{0} failed at: args ({1}); real value = {2}", method.Method.Name, string.Join(",", args), correctResult));
+						Console.WriteLine(string.Format("{0}({1}); error = {2}", 
+							method.Method.Name, string.Join(",", args), correctResult));
+
 					methodIsCorrect = false;
 				}
 			}
 		}
 
-		static void TestMultinominal(Func<uint[], ulong> func)
+		static void PrintIfCorrect(Func<uint[], ulong> method, uint[] args, ulong result, bool methodIsCorrect)
 		{
-			const uint maxNumber = 1000;
-
-			var ar = new uint[maxNumber];
-			for (uint i = 0; i < ar.Length; i++)
-				ar[i] = i + 1;
-			
-			int iter = 2;
-
-			ulong result;
-			ulong prevResult = 0;
-			IList<uint> prevComb;
-			do
-			{
-				var combinations = new Combinations<uint>(ar, iter, GenerateOption.WithRepetition);
-
-				prevComb = null;
-				var enumerator = combinations.GetEnumerator();
-				while (enumerator.MoveNext())
-				{
-					try
-					{
-						result = func(enumerator.Current.ToArray());
-						prevResult = result;
-						prevComb = enumerator.Current;
-					}
-					catch (Exception ex)
-					{
-						if (prevComb != null)
-							Console.WriteLine(string.Format("args: ({0}),{1}value = {2}", string.Join(",", prevComb.ToArray()), Environment.NewLine, prevResult));
-						break;
-					}
-				}
-				iter++;
-			}
-			while (prevComb != null);
+			if (methodIsCorrect)
+				Console.WriteLine(string.Format("{0}({1}) = {2}", method.Method.Name, string.Join(",", args), result));
 		}
 
-		static void Main(string[] args)
+		static void PerformanceTest()
 		{
-			Console.WriteLine("BigNumbers: ");
-			TestBigNumberMultinominal();
-			Console.WriteLine();
+			var argsSets = new List<uint[]>()
+			{
+				new uint[] { 1, 1 },
+				new uint[] { 1, 2 },
+				new uint[] { 2, 1 },
+				new uint[] { 2, 2 },
+				new uint[] { 5, 5, 5 },
+				new uint[] { 10, 10, 10 },
+				new uint[] { 5, 10, 15 },
+				new uint[] { 6, 6, 6, 6 },
+				new uint[] { 5, 6, 7, 8 },
+				new uint[] { 2, 3, 4, 5, 7 },
 
-		/*	Console.WriteLine("Binominal: ");
-			TestMultinominal(Multinominal.MultinominalBinomAr);
-			Console.WriteLine();
+			};
 
-			Console.WriteLine("Logarithm: ");
-			TestMultinominal(Multinominal.MultinominalLogAr);
-			Console.WriteLine();
+			var methods = new List<Func<uint[], ulong>>()
+			{
+				Multinominal.BinomAr,
+				Multinominal.LogAr,
+				Multinominal.LogGammaAr,
+				Multinominal.MyAr
+			};
 
-			Console.WriteLine("Opt: ");
-			TestMultinominal(Multinominal.MutinomonalOptAr);
-			Console.WriteLine();*/
+			List<ulong> results;
+			Stopwatch watch;
+			foreach (var method in methods)
+			{
+				results = new List<ulong>();
+				foreach (var argSet in argsSets)
+					results.Add(method(argSet));
+			}
 
-			Console.ReadLine();
+			foreach (var method in methods)
+			{
+				results = new List<ulong>();
+				watch = new Stopwatch();
+				watch.Start();
+				for (int i = 0; i < 100; i++)
+					foreach (var argSet in argsSets)
+						results.Add(method(argSet));
+				watch.Stop();
+
+				Console.WriteLine("{0}: {1}", method.Method.Name, watch.Elapsed);
+			}
 		}
 	}
 }

@@ -87,12 +87,12 @@ namespace Multinominal
 				numbersSum += number;
 
 			uint maxNumber = numbers.Max();
-			var denomFactorPowers = new uint[numbers.Max() + 1];
+			var denomFactorPowers = new uint[maxNumber + 1];
 			foreach (var number in numbers)
 				for (int i = 2; i <= number; i++)
 					denomFactorPowers[i]++;
 			for (int i = 2; i < denomFactorPowers.Length; i++)
-				denomFactorPowers[i]--; // reduce with niminator;
+				denomFactorPowers[i]--; // reduce with nominator;
 
 			uint currentFactor = 2;
 			uint currentPower = 1;
@@ -238,7 +238,7 @@ namespace Multinominal
 					denom += value;
 				else
 				{
-					value = lngamma(number + 1);
+					value = LnGamma(number + 1);
 					LnFacts.Add(number, value);
 					denom += value;
 				}
@@ -249,7 +249,7 @@ namespace Multinominal
 				numer = value;
 			else
 			{
-				value = lngamma(numbersSum + 1);
+				value = LnGamma(numbersSum + 1);
 				LnFacts.Add(numbersSum, value);
 				numer = value;
 			}
@@ -257,45 +257,45 @@ namespace Multinominal
 			return (ulong)Math.Round(Math.Exp(numer - denom));
 		}
 
-		public static double lngamma(double x)
+		public static double LnGamma(double x)
 		{
 			double sign = 1;
-			return lngamma(x, ref sign);
+			return LnGamma(x, ref sign);
 		}
 
 		/*************************************************************************
-        Natural logarithm of gamma function
+		Natural logarithm of gamma function
 
-        Input parameters:
-            X       -   argument
+		Input parameters:
+			X       -   argument
 
-        Result:
-            logarithm of the absolute value of the Gamma(X).
+		Result:
+			logarithm of the absolute value of the Gamma(X).
 
-        Output parameters:
-            SgnGam  -   sign(Gamma(X))
+		Output parameters:
+			SgnGam  -   sign(Gamma(X))
 
-        Domain:
-            0 < X < 2.55e305
-            -2.55e305 < X < 0, X is not an integer.
+		Domain:
+			0 < X < 2.55e305
+			-2.55e305 < X < 0, X is not an integer.
 
-        ACCURACY:
-        arithmetic      domain        # trials     peak         rms
-           IEEE    0, 3                 28000     5.4e-16     1.1e-16
-           IEEE    2.718, 2.556e305     40000     3.5e-16     8.3e-17
-        The error criterion was relative when the function magnitude
-        was greater than one but absolute when it was less than one.
+		ACCURACY:
+		arithmetic      domain        # trials     peak         rms
+		   IEEE    0, 3                 28000     5.4e-16     1.1e-16
+		   IEEE    2.718, 2.556e305     40000     3.5e-16     8.3e-17
+		The error criterion was relative when the function magnitude
+		was greater than one but absolute when it was less than one.
 
-        The following test used the relative error criterion, though
-        at certain points the relative error could be much higher than
-        indicated.
-           IEEE    -200, -4             10000     4.8e-16     1.3e-16
+		The following test used the relative error criterion, though
+		at certain points the relative error could be much higher than
+		indicated.
+		   IEEE    -200, -4             10000     4.8e-16     1.3e-16
 
-        Cephes Math Library Release 2.8:  June, 2000
-        Copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier
-        Translated to AlgoPascal by Bochkanov Sergey (2005, 2006, 2007).
-        *************************************************************************/
-		public static double lngamma(double x, ref double sgngam)
+		Cephes Math Library Release 2.8:  June, 2000
+		Copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier
+		Translated to AlgoPascal by Bochkanov Sergey (2005, 2006, 2007).
+		*************************************************************************/
+		public static double LnGamma(double x, ref double sgngam)
 		{
 			double result = 0;
 			double a = 0;
@@ -319,7 +319,7 @@ namespace Multinominal
 			if ((double)(x) < (double)(-34.0))
 			{
 				q = -x;
-				w = lngamma(q, ref tmp);
+				w = LnGamma(q, ref tmp);
 				p = (int)Math.Floor(q);
 				i = (int)Math.Round(p);
 				if (i % 2 == 0)
@@ -416,43 +416,9 @@ namespace Multinominal
 
 		#endregion
 
-		public static double GammaLn(double z)
+		public static ulong Diff(ulong number1, ulong number2)
 		{
-			double result;
-			if (z < 0.5)
-			{
-				double s = Gamma_dk[0];
-				for (int i = 1; i <= 10; i++)
-				{
-					s += Gamma_dk[i] / ((double)i - z);
-				}
-				result = 1.1447298858494002 - Math.Log(Math.Sin(3.1415926535897931 * z)) - Math.Log(s) - 0.6207822376352452 - (0.5 - z) * Math.Log((0.5 - z + 10.900511) / 2.7182818284590451);
-			}
-			else
-			{
-				double s = Gamma_dk[0];
-				for (int i = 1; i <= 10; i++)
-				{
-					s += Gamma_dk[i] / (z + (double)i - 1.0);
-				}
-				result = Math.Log(s) + 0.6207822376352452 + (z - 0.5) * Math.Log((z - 0.5 + 10.900511) / 2.7182818284590451);
-			}
-			return result;
+			return number1 >= number2 ? number1 - number2 : number2 - number1;
 		}
-
-		static double[] Gamma_dk = new double[]
-		{
-			2.4857408913875355E-05,
-			1.0514237858172197,
-			-3.4568709722201625,
-			4.5122770946689483,
-			-2.9828522532357664,
-			1.056397115771267,
-			-0.19542877319164587,
-			0.017097054340444121,
-			-0.00057192611740430573,
-			4.6339947335990567E-06,
-			-2.7199490848860772E-09
-		};
 	}
 }

@@ -60,15 +60,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Combinations.cs" />
-    <Compile Include="GenerateOption.cs" />
-    <Compile Include="IMetaCollection.cs" />
+    <Compile Include="Combinat\Combinations.cs" />
+    <Compile Include="Combinat\GenerateOption.cs" />
+    <Compile Include="Combinat\IMetaCollection.cs" />
+    <Compile Include="Combinat\Permutations.cs" />
+    <Compile Include="Combinat\SmallPrimeUtility.cs" />
+    <Compile Include="Combinat\Variations.cs" />
     <Compile Include="Multinominal.cs" />
-    <Compile Include="Permutations.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SmallPrimeUtility.cs" />
-    <Compile Include="Variations.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -95,6 +95,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
