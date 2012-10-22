@@ -5,9 +5,9 @@ using System.Text;
 using System.Numerics;
 
 
-namespace Multinominal
+namespace Multinomial
 {
-	public static class Multinominal
+	public static class Multinomial
 	{
 		#region Naive
 

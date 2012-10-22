@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multinominal", "Multinominal\Multinominal.csproj", "{B07F1021-1194-4822-BF7D-8FE4A8B95F38}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multinomial", "Multinomial\Multinomial.csproj", "{B07F1021-1194-4822-BF7D-8FE4A8B95F38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultinomonalTests", "MultinimonalTests\MultinomonalTests.csproj", "{4FB43893-7B15-445F-81D7-AACF884EC563}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultinomialTests", "MultinomialTests\MultinomialTests.csproj", "{4FB43893-7B15-445F-81D7-AACF884EC563}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

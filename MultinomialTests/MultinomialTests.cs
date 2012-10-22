@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-namespace MultinimonalTests
+namespace MultinomialTests
 {
 	[TestFixture]
-	public class MultinominalTests
+	public class MultinomialTests
 	{
 		[Test]
 		public void Test()
@@ -30,19 +30,19 @@ namespace MultinimonalTests
 
 			var methods = new List<Func<uint[], ulong>>()
 			{
-				Multinominal.Multinominal.BinomAr,
-				Multinominal.Multinominal.LogAr,
-				Multinominal.Multinominal.LogGammaAr,
-				Multinominal.Multinominal.MyAr
+				Multinomial.Multinomial.BinomAr,
+				Multinomial.Multinomial.LogAr,
+				Multinomial.Multinomial.LogGammaAr,
+				Multinomial.Multinomial.MyAr
 			};
 
 			ulong maxError = 0;
 
 			foreach (var argSet in argsSets)
 			{
-				var bigNumbersResult = (ulong)Multinominal.Multinominal.BigAr(argSet);
+				var bigNumbersResult = (ulong)Multinomial.Multinomial.BigAr(argSet);
 				foreach (var method in methods)
-					Assert.LessOrEqual(Multinominal.Multinominal.Diff(bigNumbersResult, method(argSet)), maxError);
+					Assert.LessOrEqual(Multinomial.Multinomial.Diff(bigNumbersResult, method(argSet)), maxError);
 			}
 		}
 	}

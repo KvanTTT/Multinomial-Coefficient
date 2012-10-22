@@ -8,7 +8,7 @@
     <ProjectGuid>{4FB43893-7B15-445F-81D7-AACF884EC563}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MultinimonalTests</RootNamespace>
+    <RootNamespace>MultinomialTests</RootNamespace>
     <AssemblyName>MultinimonalTests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -46,16 +46,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MultinominalTests.cs" />
+    <Compile Include="MultinomialTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Multinominal\Multinominal.csproj">
+    <ProjectReference Include="..\Multinomial\Multinomial.csproj">
       <Project>{B07F1021-1194-4822-BF7D-8FE4A8B95F38}</Project>
-      <Name>Multinominal</Name>
+      <Name>Multinomial</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -6,13 +6,13 @@ using Facet.Combinatorics;
 using System.Numerics;
 using System.Diagnostics;
 
-namespace Multinominal
+namespace Multinomial
 {
 	class Program
 	{
 		static void Main(string[] args)
 		{
-			TestBigNumberMultinominal();
+			TestBigNumberMultinomial();
 
 			Console.WriteLine();
 
@@ -21,7 +21,7 @@ namespace Multinominal
 			Console.ReadLine();
 		}
 
-		static void TestBigNumberMultinominal()
+		static void TestBigNumberMultinomial()
 		{
 			const uint maxNumber = 1000;
 
@@ -49,17 +49,17 @@ namespace Multinominal
 				{
 					var curPermut = enumerator.Current.ToArray();
 
-					result = Multinominal.BigAr(curPermut);
+					result = Multinomial.BigAr(curPermut);
 					if (result <= ulong.MaxValue)
 					{
 						count++;
 						prevResult = result;
 						prevComb = enumerator.Current;
 
-						MultinomCoefMethodTest(curPermut, Multinominal.BinomAr, ref binomIsCorrect, (ulong)result, 0);
-						MultinomCoefMethodTest(curPermut, Multinominal.LogAr, ref logIsCorrect, (ulong)result, 0);
-						MultinomCoefMethodTest(curPermut, Multinominal.LogGammaAr, ref lnGammaIsCorrect, (ulong)result, 0);
-						MultinomCoefMethodTest(curPermut, Multinominal.MyAr, ref optIsCorrect, (ulong)result, 0);
+						MultinomCoefMethodTest(curPermut, Multinomial.BinomAr, ref binomIsCorrect, (ulong)result, 0);
+						MultinomCoefMethodTest(curPermut, Multinomial.LogAr, ref logIsCorrect, (ulong)result, 0);
+						MultinomCoefMethodTest(curPermut, Multinomial.LogGammaAr, ref lnGammaIsCorrect, (ulong)result, 0);
+						MultinomCoefMethodTest(curPermut, Multinomial.MyAr, ref optIsCorrect, (ulong)result, 0);
 					}
 					else
 					{
@@ -67,10 +67,10 @@ namespace Multinominal
 						{
 							var prevPermut = prevComb.ToArray();
 							var prevResultULong = (ulong)prevResult;
-							PrintIfCorrect(Multinominal.BinomAr, prevPermut, prevResultULong, binomIsCorrect);
-							PrintIfCorrect(Multinominal.LogAr, prevPermut, prevResultULong, logIsCorrect);
-							PrintIfCorrect(Multinominal.LogGammaAr, prevPermut, prevResultULong, lnGammaIsCorrect);
-							PrintIfCorrect(Multinominal.MyAr, prevPermut, prevResultULong, optIsCorrect);
+							PrintIfCorrect(Multinomial.BinomAr, prevPermut, prevResultULong, binomIsCorrect);
+							PrintIfCorrect(Multinomial.LogAr, prevPermut, prevResultULong, logIsCorrect);
+							PrintIfCorrect(Multinomial.LogGammaAr, prevPermut, prevResultULong, lnGammaIsCorrect);
+							PrintIfCorrect(Multinomial.MyAr, prevPermut, prevResultULong, optIsCorrect);
 
 							Console.WriteLine(string.Format("BigNumber({0}) = {1}", string.Join(",", prevPermut), prevResult));
 						}
@@ -93,14 +93,14 @@ namespace Multinominal
 				{
 					temp = 0;
 					temp = method(args);
-					if (Multinominal.Diff(temp, correctResult) > maxError)
+					if (Multinomial.Diff(temp, correctResult) > maxError)
 						throw new Exception();
 				}
 				catch
 				{
 					if (temp != 0)
 						Console.WriteLine(string.Format("{0}({1}) = {2}; error = {3}", 
-							method.Method.Name, string.Join(",", args), temp, Multinominal.Diff(temp, correctResult)));
+							method.Method.Name, string.Join(",", args), temp, Multinomial.Diff(temp, correctResult)));
 					else
 						Console.WriteLine(string.Format("{0}({1}); error = {2}", 
 							method.Method.Name, string.Join(",", args), correctResult));
@@ -135,10 +135,10 @@ namespace Multinominal
 
 			var methods = new List<Func<uint[], ulong>>()
 			{
-				Multinominal.BinomAr,
-				Multinominal.LogAr,
-				Multinominal.LogGammaAr,
-				Multinominal.MyAr
+				Multinomial.BinomAr,
+				Multinomial.LogAr,
+				Multinomial.LogGammaAr,
+				Multinomial.MyAr
 			};
 
 			List<ulong> results;

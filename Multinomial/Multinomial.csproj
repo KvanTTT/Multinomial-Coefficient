@@ -8,7 +8,7 @@
     <ProjectGuid>{B07F1021-1194-4822-BF7D-8FE4A8B95F38}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Multinominal</RootNamespace>
+    <RootNamespace>Multinomial</RootNamespace>
     <AssemblyName>Multinominal</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -60,13 +60,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Combinat\Combinations.cs" />
-    <Compile Include="Combinat\GenerateOption.cs" />
-    <Compile Include="Combinat\IMetaCollection.cs" />
-    <Compile Include="Combinat\Permutations.cs" />
-    <Compile Include="Combinat\SmallPrimeUtility.cs" />
-    <Compile Include="Combinat\Variations.cs" />
-    <Compile Include="Multinominal.cs" />
+    <Compile Include="Combination\Combinations.cs" />
+    <Compile Include="Combination\GenerateOption.cs" />
+    <Compile Include="Combination\IMetaCollection.cs" />
+    <Compile Include="Combination\Permutations.cs" />
+    <Compile Include="Combination\SmallPrimeUtility.cs" />
+    <Compile Include="Combination\Variations.cs" />
+    <Compile Include="Multinomial.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -91,9 +91,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
