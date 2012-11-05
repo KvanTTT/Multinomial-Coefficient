@@ -4,19 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Numerics;
 
-
 namespace Multinomial
 {
 	public static class Multinomial
 	{
 		#region Naive
 
-		public static ulong Mutinomonal(params uint[] numbers)
+		public static ulong Naive(params uint[] numbers)
 		{
-			return MutinomonalAr(numbers);
+			return NaiveAr(numbers);
 		}
 
-		public static ulong MutinomonalAr(params uint[] numbers)
+		public static ulong NaiveAr(params uint[] numbers)
 		{
 			uint numbersSum = 0;
 			foreach (var number in numbers)
@@ -43,12 +42,12 @@ namespace Multinomial
 
 		#region Big Integer
 
-		public static BigInteger Big(params uint[] numbers)
+		public static ulong Big(params uint[] numbers)
 		{
 			return BigAr(numbers);
 		}
 
-		public static BigInteger BigAr(uint[] numbers)
+		public static ulong BigAr(uint[] numbers)
 		{
 			BigInteger numbersSum = 0;
 			foreach (var number in numbers)
@@ -60,7 +59,7 @@ namespace Multinomial
 			foreach (var number in numbers)
 				denominator *= Factorial(new BigInteger(number));
 
-			return nominator / denominator;
+			return (ulong)(nominator / denominator);
 		}
 		
 		public static BigInteger Factorial(BigInteger n)
@@ -419,6 +418,12 @@ namespace Multinomial
 		public static ulong Diff(ulong number1, ulong number2)
 		{
 			return number1 >= number2 ? number1 - number2 : number2 - number1;
+		}
+
+		public static void ClearCache()
+		{
+			Logarithms = new List<double>();
+			LnFacts = new Dictionary<uint, double>();
 		}
 	}
 }

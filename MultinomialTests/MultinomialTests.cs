@@ -30,10 +30,11 @@ namespace MultinomialTests
 
 			var methods = new List<Func<uint[], ulong>>()
 			{
-				Multinomial.Multinomial.BinomAr,
-				Multinomial.Multinomial.LogAr,
-				Multinomial.Multinomial.LogGammaAr,
-				Multinomial.Multinomial.MyAr
+				Multinomial.Multinomial.Big,
+				Multinomial.Multinomial.Binom,
+				Multinomial.Multinomial.Log,
+				Multinomial.Multinomial.LogGamma,
+				Multinomial.Multinomial.My
 			};
 
 			ulong maxError = 0;
