@@ -34,7 +34,8 @@ namespace MultinomialTests
 				Multinomial.Multinomial.Binom,
 				Multinomial.Multinomial.Log,
 				Multinomial.Multinomial.LogGamma,
-				Multinomial.Multinomial.My
+				Multinomial.Multinomial.My,
+				Multinomial.Multinomial.PrimeNumbers
 			};
 
 			ulong maxError = 0;

@@ -129,32 +129,57 @@ namespace Multinomial
 
 		public static ulong BinomAr(uint[] numbers)
 		{
-			if (numbers.Length == 1)
-				return 1;
-
-			ulong result = 1;
+			ulong res = 1;
 			uint sum = numbers[0];
-
-			for (int i = 1; i < numbers.Length; i++)
-			{
-				sum += numbers[i];
-				result *= Binominal(sum, numbers[i]);
-			}
-
-			return result;
+			for (uint i = 1; i < numbers.Length; i++)
+				for (uint j = 1; j <= numbers[i]; j++)
+				{
+					sum++;
+					res = (res / j) * sum + (res % j) * sum / j;
+				}
+			return res;
 		}
 
-		public static ulong Binominal(ulong n, ulong k)
+		#endregion
+
+		#region Prime Numbers
+
+		public static ulong PrimeNumbers(params uint[] numbers)
 		{
-			ulong r = 1;
-			ulong d;
-			if (k > n) return 0;
-			for (d = 1; d <= k; d++)
+			return PrimeNumbersAr(numbers);
+		}
+
+		public static ulong PrimeNumbersAr(uint[] numbers)
+		{
+			uint s = 0;
+			foreach (uint a in numbers)
+				s += a;
+			ulong result = 1;
+			for (uint p = 2; p <= s; p++)
 			{
-				r *= n--;
-				r /= d;
+				bool br = false;
+				for (uint q = 2; q * q <= p; q++)
+					if (p % q == 0)
+					{
+						br = true;
+						break;
+					}
+				if (!br)
+				{
+					uint pow = 0;
+					for (uint h = s / p; h != 0; h /= p)
+						pow += h;
+					foreach (uint a in numbers)
+						for (uint h = a / p; h != 0; h /= p)
+							pow -= h;
+					while (pow != 0)
+					{
+						result *= p;
+						pow--;
+					}
+				}
 			}
-			return r;
+			return result;
 		}
 
 		#endregion

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Facet.Combinatorics;
 using System.Numerics;
 using System.Diagnostics;
 using System.IO;
@@ -12,6 +11,17 @@ namespace Multinomial
 	class Program
 	{
 		static StringBuilder Results;
+		static Func<uint[], ulong>[] MultinomialMethods = new Func<uint[], ulong>[]
+		{
+			Multinomial.Naive,
+			Multinomial.Binom,
+			Multinomial.Log,
+			Multinomial.LogGamma,
+			Multinomial.My,
+			Multinomial.Naive,
+			Multinomial.PrimeNumbers,
+			Multinomial.Big
+		};
 
 		static void Main(string[] args)
 		{
@@ -56,11 +66,7 @@ namespace Multinomial
 
 			const uint maxNumber = 1000;
 
-			var ar = new uint[maxNumber];
-			for (uint i = 0; i < ar.Length; i++)
-				ar[i] = i + 1;
-
-			int iter = 2;
+			uint iteration = 2;
 
 			ulong result;
 			int prevPermutNumber;
@@ -69,33 +75,31 @@ namespace Multinomial
 			int count = 0;
 			do
 			{
-				Results.Append(iter + "\t");
+				Results.Append(iteration + "\t");
 				tempResults.Clear();
-
-				var combinations = new Combinations<uint>(ar, iter, GenerateOption.WithRepetition);
 
 				prevPermut = null;
 				prevResult = 0;
 				prevPermutNumber = -1;
-				var enumerator = combinations.GetEnumerator();
 				bool bigIsCorrect = true;
 				bool naiveIsCorrect = true;
 				bool binomIsCorrect = true;
 				bool logIsCorrect = true;
 				bool optIsCorrect = true;
 				bool lnGammaIsCorrect = true;
+				bool primeNumbersIsCorrect = true;
 
-				Console.WriteLine("Arg count: " + iter);
-				while (enumerator.MoveNext())
+				Console.WriteLine("Arg count: " + iteration);
+				uint[] combination;
+				while ((combination = CombinationWithRepetition.Next(maxNumber, iteration)) != null)
 				{
-					var curPermut = enumerator.Current.ToArray();
-
+					var currentCombintaion = combination.Select(a => a + 1).ToArray();
 					count++;
 
 					result = 0;
 					try
 					{
-						result = Multinomial.Big(curPermut);
+						result = Multinomial.Big(currentCombintaion);
 					}
 					catch
 					{
@@ -104,13 +108,14 @@ namespace Multinomial
 					
 					if (bigIsCorrect)
 					{
-						MultinomCoefMethodTest(curPermut, prevPermut, prevPermutNumber, Multinomial.Naive, ref naiveIsCorrect, result, maxError, errorMeasure, tempResults);
-						MultinomCoefMethodTest(curPermut, prevPermut, prevPermutNumber, Multinomial.Binom, ref binomIsCorrect, result, maxError, errorMeasure, tempResults);
-						MultinomCoefMethodTest(curPermut, prevPermut, prevPermutNumber, Multinomial.Log, ref logIsCorrect, result, maxError, errorMeasure, tempResults);
-						MultinomCoefMethodTest(curPermut, prevPermut, prevPermutNumber, Multinomial.LogGamma, ref lnGammaIsCorrect, result, maxError, errorMeasure, tempResults);
-						MultinomCoefMethodTest(curPermut, prevPermut, prevPermutNumber, Multinomial.My, ref optIsCorrect, result, maxError, errorMeasure, tempResults);
+						MultinomCoefMethodTest(currentCombintaion, prevPermut, prevPermutNumber, Multinomial.Naive, ref naiveIsCorrect, result, maxError, errorMeasure, tempResults);
+						MultinomCoefMethodTest(currentCombintaion, prevPermut, prevPermutNumber, Multinomial.Binom, ref binomIsCorrect, result, maxError, errorMeasure, tempResults);
+						MultinomCoefMethodTest(currentCombintaion, prevPermut, prevPermutNumber, Multinomial.Log, ref logIsCorrect, result, maxError, errorMeasure, tempResults);
+						MultinomCoefMethodTest(currentCombintaion, prevPermut, prevPermutNumber, Multinomial.LogGamma, ref lnGammaIsCorrect, result, maxError, errorMeasure, tempResults);
+						MultinomCoefMethodTest(currentCombintaion, prevPermut, prevPermutNumber, Multinomial.My, ref optIsCorrect, result, maxError, errorMeasure, tempResults);
+						MultinomCoefMethodTest(currentCombintaion, prevPermut, prevPermutNumber, Multinomial.PrimeNumbers, ref primeNumbersIsCorrect, result, maxError, errorMeasure, tempResults);
 
-						prevPermut = enumerator.Current.ToArray();
+						prevPermut = (uint[])currentCombintaion.Clone();
 						prevResult = result;
 						prevPermutNumber++;
 					}
@@ -123,6 +128,7 @@ namespace Multinomial
 							PrintIfCorrect(Multinomial.Log, prevPermut, prevPermutNumber, prevResult, logIsCorrect, tempResults);
 							PrintIfCorrect(Multinomial.LogGamma, prevPermut, prevPermutNumber, prevResult, lnGammaIsCorrect, tempResults);
 							PrintIfCorrect(Multinomial.My, prevPermut, prevPermutNumber, prevResult, optIsCorrect, tempResults);
+							PrintIfCorrect(Multinomial.PrimeNumbers, prevPermut, prevPermutNumber, prevResult, primeNumbersIsCorrect, tempResults);
 							PrintIfCorrect(Multinomial.Big, prevPermut, prevPermutNumber, prevResult, true, tempResults);
 
 							PrintTempResult("Naive", tempResults);
@@ -130,6 +136,7 @@ namespace Multinomial
 							PrintTempResult("Log", tempResults);
 							PrintTempResult("LogGamma", tempResults);
 							PrintTempResult("My", tempResults);
+							PrintTempResult("PrimeNumbers", tempResults);
 							PrintTempResult("Big", tempResults);
 							Results.Remove(Results.Length - 1, 1);
 						}
@@ -138,7 +145,7 @@ namespace Multinomial
 						break;
 					}
 				}
-				iter++;
+				iteration++;
 
 				Results.AppendLine();
 			}
@@ -271,27 +278,17 @@ namespace Multinomial
 				new uint[] { 1, 2, 3, 4, 5, 4 },
 			};
 
-			var methods = new List<Func<uint[], ulong>>()
-			{
-				Multinomial.Naive,
-				Multinomial.Binom,
-				Multinomial.Log,
-				Multinomial.LogGamma,
-				Multinomial.My,
-				Multinomial.Big
-			};
-
 			List<ulong> results;
 			Stopwatch watch;
 
 			results = new List<ulong>(repeatCount);
 
 			if (prefetch)
-				foreach (var method in methods)
+				foreach (var method in MultinomialMethods)
 					foreach (var argSet in argsSets)
 						results.Add(method(argSet));
 
-			foreach (var method in methods)
+			foreach (var method in MultinomialMethods)
 			{
 				results.Clear();
 				watch = new Stopwatch();
@@ -301,8 +298,8 @@ namespace Multinomial
 						results.Add(method(argSet));
 				watch.Stop();
 
-				Console.WriteLine("{0,10}: {1}", method.Method.Name, watch.Elapsed.ToString());
-				Results.AppendFormat("{0,-10}:	{1}{2}", method.Method.Name, watch.Elapsed.ToString(), Environment.NewLine);
+				Console.WriteLine("{0,15}: {1}", method.Method.Name, watch.Elapsed.ToString());
+				Results.AppendFormat("{0,-15}:	{1}{2}", method.Method.Name, watch.Elapsed.ToString(), Environment.NewLine);
 			}
 			return results[42];
 		}
@@ -329,6 +326,7 @@ namespace Multinomial
 				Multinomial.Log,
 				Multinomial.LogGamma,
 				Multinomial.My,
+				Multinomial.PrimeNumbers,
 				Multinomial.Big
 			};
 
@@ -352,8 +350,8 @@ namespace Multinomial
 						results.Add(method(argSet));
 				watch.Stop();
 
-				Console.WriteLine("{0,10}: {1}", method.Method.Name, watch.Elapsed.ToString());
-				Results.AppendFormat("{0,-10}:	{1}{2}", method.Method.Name, watch.Elapsed.ToString(), Environment.NewLine);
+				Console.WriteLine("{0,15}: {1}", method.Method.Name, watch.Elapsed.ToString());
+				Results.AppendFormat("{0,-15}:	{1}{2}", method.Method.Name, watch.Elapsed.ToString(), Environment.NewLine);
 			}
 			return results[42];
 		}
