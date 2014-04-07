@@ -1,7 +1,7 @@
 Multinomial-Coefficient
 ========================
 
-A library for <a ref="http://en.wikipedia.org/wiki/Multinomial_theorem#Multinomial_coefficients">multinominal coefficient</a> calculating in different ways:
+A library for [multinomial coefficient](http://en.wikipedia.org/wiki/Multinomial_theorem#Multinomial_coefficients) calculating in different ways:
 
 - BigInteger.
 - Decomposion on binominal coefficients multiplication.
